@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FaHeart, FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import Loading from "../components/Loader/Loader";
 
 interface Book {
@@ -8,12 +9,15 @@ interface Book {
   author_name: string[];
   cover_i?: number;
   cover_img: string;
+  liked?: boolean;
 }
 
 const Index = () => {
 
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filterLiked, setFilterLiked] = useState(false);
+  const navigate = useNavigate();
 
   const getBooks = async () => {
     setLoading(true);
@@ -26,6 +30,7 @@ const Index = () => {
         cover_img: book.cover_i
           ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
           : 'https://via.placeholder.com/150',
+        liked: false,
       }));
 
       setBooks(booksWithCovers);
@@ -36,32 +41,60 @@ const Index = () => {
     }
   };
 
+  const toggleLike = (key: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setBooks((prevBooks) =>
+      prevBooks.map((book) =>
+        book.key === key ? { ...book, liked: !book.liked } : book
+      )
+    );
+  };
+
+  const removeBook = (key: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setBooks((prevBooks) => prevBooks.filter((book) => book.key !== key));
+  };
+
+  const toggleFilter = () => {
+    setFilterLiked((prev) => !prev);
+  };
+
   useEffect(() => {
     getBooks();
   }, []);
 
   console.log(books);
-  if(loading) return <Loading />;
+  if (loading) return <Loading />;
+  const displayedBooks = filterLiked ? books.filter((book) => book.liked) : books;
 
-    return (
-
+  return (
+      <div>
+        <button onClick={toggleFilter} className="filter-button">
+          {filterLiked ? "Показать все книги" : "Показать только залайканные"}
+        </button>
             <div className="container">
                 {
-                    books.map((book) => {
+                    displayedBooks.map((book) => {
                       return (
-                            <div className="card_item" key={book.key}>
+                        <div className="card_item"
+                          key={book.key}
+                          onClick={() => navigate(`/book${book.key}`)}
+                        >
                                 <div className="card_inner">
-                                <Link to={`/book${book.key}`}>
+                                {/* <Link to={`/book${book.key}`}> */}
                                     <img src={book.cover_img} alt={book.title} />
-                                </Link>
-                                    {/* <img src={book.cover_img} alt={book.title} /> */}
+                                {/* </Link> */}
                                     <div className="userName">{book.title}</div>
                                     <div className="userUrl">{book.author_name}</div>
-                                    <div className="detail-box">
-
-                                        <div className="gitDetail"><span>Articles</span>23</div>
-                                        <div className="gitDetail"><span>Following</span>45</div>
-                                        <div className="gitDetail"><span>Followers</span>11</div>
+                                    <div className="icon-buttons">
+                                      <FaHeart
+                                        onClick={(event) => toggleLike(book.key, event)}
+                                        style={{ color: book.liked ? 'red' : 'gray', cursor: 'pointer' }}
+                                      />
+                                      <FaTrash
+                                        onClick={(event) => removeBook(book.key, event)}
+                                        style={{ color: 'black', cursor: 'pointer', marginLeft: '10px' }}
+                                      />
                                     </div>
                                     <button className="seeMore">See More</button>
                                 </div>
@@ -72,7 +105,7 @@ const Index = () => {
                 }
 
             </div>
-
+        </div>
 
     )
 }

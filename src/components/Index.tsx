@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Loading from "../components/Loader/Loader";
 
 interface Book {
   key: string;
@@ -10,29 +12,36 @@ interface Book {
 
 const Index = () => {
 
-   const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    const getBooks = async () => {
+  const getBooks = async () => {
+    setLoading(true);
+    try {
       const response = await fetch("https://openlibrary.org/search.json?title=the+lord+of+the+rings");
       const data = await response.json();
-      // setBooks(data.docs);
-      const booksWithCovers = data.docs.map((book: any) => {
-        return {
-          ...book,
-          cover_img: book.cover_i
-            ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
-            : 'https://via.placeholder.com/150',
-        };
-      });
+
+      const booksWithCovers = data.docs.map((book: any) => ({
+        ...book,
+        cover_img: book.cover_i
+          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+          : 'https://via.placeholder.com/150',
+      }));
 
       setBooks(booksWithCovers);
-    };
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getBooks();
   }, []);
 
   console.log(books);
+  if(loading) return <Loading />;
 
     return (
 
@@ -42,7 +51,10 @@ const Index = () => {
                       return (
                             <div className="card_item" key={book.key}>
                                 <div className="card_inner">
+                                <Link to={`/book${book.key}`}>
                                     <img src={book.cover_img} alt={book.title} />
+                                </Link>
+                                    {/* <img src={book.cover_img} alt={book.title} /> */}
                                     <div className="userName">{book.title}</div>
                                     <div className="userUrl">{book.author_name}</div>
                                     <div className="detail-box">

@@ -42,6 +42,16 @@ img{
   margin-left: 20px;
   margin-bottom: 2.6rem;
   transition: var(--transition);
+  /* margin: 10px auto; */
+	width: 100px;
+	height: 35px;
+	background: hsl(245, 44%, 65%);
+	color: #fff;
+	border: none;
+	border-radius: 10px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 10px 10px hsl(225, 100%, 94%);
 }
 .back-btn:hover{
   color: var(--purple-color);
@@ -85,6 +95,14 @@ img{
   outline: -1px solid slategray;
   border-radius: 8px;
 }
+
+.fw-3{font-weight: 300;}
+.fw-4{font-weight: 400;}
+.fw-5{font-weight: 500;}
+.fw-6{font-weight: 600;}
+.fw-7{font-weight: 700;}
+.fw-8{font-weight: 800;}
+.fw-9{font-weight: 900;}
 
 @media screen and (min-width: 768px){
   .book-details-content{

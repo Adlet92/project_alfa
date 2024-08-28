@@ -1,5 +1,5 @@
+import Header from '../src/components/Header/Headers';
 import './App.css';
-import Header from './components/Headers';
 import Index from './components/Index';
 
 function App() {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-// import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate, useParams } from 'react-router-dom';
-// import coverImg from "../../images/cover_not_found.jpg";
-import Loading from "../Loader/Loader";
+import ClipLoader from 'react-spinners/ClipLoader';
+import coverImg from "../images/cover_not_found.jpg";
 import "./BookDetail.css";
+
 
 interface BookDetailsType {
   description: string;
@@ -35,8 +35,7 @@ const BookDetails = () => {
           const newBook: BookDetailsType = {
             description: description ? (typeof description === 'string' ? description : description.value) : "No description found",
             title: title,
-            // cover_img: covers ? `https://covers.openlibrary.org/b/id/${covers[0]}-L.jpg` : coverImg,
-            cover_img: `https://covers.openlibrary.org/b/id/${covers[0]}-L.jpg`,
+            cover_img: covers ? `https://covers.openlibrary.org/b/id/${covers[0]}-L.jpg` : coverImg,
             subject_places: subject_places ? subject_places.join(", ") : "No subject places found",
             subject_times: subject_times ? subject_times.join(", ") : "No subject times found",
             subjects: subjects ? subjects.join(", ") : "No subjects found"
@@ -54,13 +53,17 @@ const BookDetails = () => {
     getBookDetails();
   }, [id]);
 
-  if(loading) return <Loading />;
+  if (loading)
+    return (
+      <div className="loader-container">
+        <ClipLoader size={50} color="#007bff" />
+      </div>
+    );
 
   return (
     <section className='book-details'>
       <div className='container'>
         <button type='button' className='flex flex-c back-btn' onClick={() => navigate("/")}>
-          {/* <FaArrowLeft size = {22} /> */}
           <span className='fs-18 fw-6'>Go Back</span>
         </button>
 

@@ -1,0 +1,97 @@
+.card_item {
+	padding: 15px 30px;
+	width: 24%;
+	text-align: center;
+}
+
+.card_item:hover {
+	transform: scale(1.02);
+	transition: transform .3s;
+	cursor: pointer;
+}
+
+.card_inner {
+	background: rgba(253, 253, 253, 0.808);
+	border-radius: 10px;
+	padding: 35px 20px;
+	min-width: 225px;
+	min-height: 315px;
+	max-height: 370px;
+	width: 100%;
+	box-shadow: 5px 5px 10px 2px rgba(95, 95, 95, 0.24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card_item img {
+	width: 120px;
+	height: 120px;
+	margin-bottom: 10px;
+	align-items: center;
+	transition: transform .2s;
+}
+
+.card_item .userName {
+	color: #203150;
+	font-weight: 600;
+	font-size: 20px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin: 0 auto;
+  line-height: 1.2;
+
+}
+
+.card_item .userUrl {
+	font-size: 12px;
+	font-weight: 100;
+	margin: 5px 0 10px;
+	word-wrap: break-word;
+	color: #888B9E;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.card_item .gitDetail {
+	font-size: 14px;
+	line-height: 24px;
+	color: #7b8ca0;
+	display: flex;
+	flex-direction: column;
+}
+
+@media screen and (max-width: 1024px) {
+	.card_item {
+		width: 33%;
+		display: block;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.card_item {
+		width: 50%;
+	}
+	.wrapper .header {
+		font-size: 16px;
+		height: 50px;
+	}
+}
+
+@media screen and (max-width: 568px) {
+	.card_item {
+		width: 80%;
+		margin: auto;
+	}
+}
+
+@media screen and (max-width: 320px) {
+	.card_item {
+		width: 100%;
+	}
+}
+

@@ -1,25 +1,18 @@
-import { useEffect, useState } from 'react';
-import { FaHeart, FaTrash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import Loading from "../components/Loader/Loader";
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ClipLoader from 'react-spinners/ClipLoader';
+import { removeBook, setBooks, toggleLike } from '../components/Store/booksSlice';
+import { RootState } from '../components/Store/store';
+import BookCard from './BookCard/BookCard';
 
-interface Book {
-  key: string;
-  title: string;
-  author_name: string[];
-  cover_i?: number;
-  cover_img: string;
-  liked?: boolean;
-}
 
 const Index = () => {
 
-  const [books, setBooks] = useState<Book[]>([]);
+  const books = useSelector((state: RootState) => state.books.books);
   const [loading, setLoading] = useState(false);
   const [filterLiked, setFilterLiked] = useState(false);
-  const navigate = useNavigate();
-
-  const getBooks = async () => {
+  const dispatch = useDispatch();
+  const getBooks = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch("https://openlibrary.org/search.json?title=the+lord+of+the+rings");
@@ -33,26 +26,22 @@ const Index = () => {
         liked: false,
       }));
 
-      setBooks(booksWithCovers);
+      dispatch(setBooks(booksWithCovers));
     } catch (error) {
       console.error("Error fetching books:", error);
     } finally {
       setLoading(false);
     }
+  }, [dispatch]);
+
+  const handleToggleLike = (key: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    dispatch(toggleLike(key));
   };
 
-  const toggleLike = (key: string, event: React.MouseEvent) => {
+  const handleRemoveBook = (key: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    setBooks((prevBooks) =>
-      prevBooks.map((book) =>
-        book.key === key ? { ...book, liked: !book.liked } : book
-      )
-    );
-  };
-
-  const removeBook = (key: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    setBooks((prevBooks) => prevBooks.filter((book) => book.key !== key));
+    dispatch(removeBook(key));
   };
 
   const toggleFilter = () => {
@@ -61,49 +50,32 @@ const Index = () => {
 
   useEffect(() => {
     getBooks();
-  }, []);
+  }, [getBooks]);
 
-  console.log(books);
-  if (loading) return <Loading />;
+
+  if (loading)
+    return (
+      <div className="loader-container">
+        <ClipLoader size={50} color="#007bff" />
+      </div>
+    );
+
   const displayedBooks = filterLiked ? books.filter((book) => book.liked) : books;
 
   return (
-      <div>
+      <div className="button-wrapper">
         <button onClick={toggleFilter} className="filter-button">
           {filterLiked ? "Показать все книги" : "Показать только залайканные"}
         </button>
             <div className="container">
-                {
-                    displayedBooks.map((book) => {
-                      return (
-                        <div className="card_item"
-                          key={book.key}
-                          onClick={() => navigate(`/book${book.key}`)}
-                        >
-                                <div className="card_inner">
-                                {/* <Link to={`/book${book.key}`}> */}
-                                    <img src={book.cover_img} alt={book.title} />
-                                {/* </Link> */}
-                                    <div className="userName">{book.title}</div>
-                                    <div className="userUrl">{book.author_name}</div>
-                                    <div className="icon-buttons">
-                                      <FaHeart
-                                        onClick={(event) => toggleLike(book.key, event)}
-                                        style={{ color: book.liked ? 'red' : 'gray', cursor: 'pointer' }}
-                                      />
-                                      <FaTrash
-                                        onClick={(event) => removeBook(book.key, event)}
-                                        style={{ color: 'black', cursor: 'pointer', marginLeft: '10px' }}
-                                      />
-                                    </div>
-                                    <button className="seeMore">See More</button>
-                                </div>
-
-                            </div>
-                        )
-                    })
-                }
-
+              {displayedBooks.map((book) => (
+                <BookCard
+                  key={book.key}
+                  book={book}
+                  onToggleLike={handleToggleLike}
+                  onRemoveBook={handleRemoveBook}
+                />
+              ))}
             </div>
         </div>
 
